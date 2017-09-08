@@ -55,7 +55,7 @@ public class ContentInsideEllipse extends ContentInsideShape
     {
         Rectangle2D contentBounds = getContent().getBounds();
         double width = Math.sqrt(contentBounds.getWidth() * contentBounds.getWidth() + aspectRatio * aspectRatio * contentBounds.getHeight() * contentBounds.getHeight());
-        double height = width / aspectRatio;
+        double height = DEFAULT_HEIGHT;
 
         return new Ellipse2D.Double(0,0,width, height);
     }
