@@ -44,6 +44,9 @@ public class OptionalToolsPanelUI extends PanelUI
         JButton bPrint = this.optionalToolsPanel.getPrintButton();
         addButton(bPrint);
 
+        JButton bVizualiseClass = this.optionalToolsPanel.getVizualisationButton();
+        addButton(bVizualiseClass);
+
         JButton bExportToClipboard = this.optionalToolsPanel.getExportToClipboardButton();
         addButton(bExportToClipboard);
 
