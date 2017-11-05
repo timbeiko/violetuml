@@ -98,7 +98,7 @@ public class OptionalToolsPanel extends JPanel implements ISideBarElement
         {
             public void actionPerformed(ActionEvent e)
             {
-               System.out.println("VIZZZ");
+               diagramPanel.getGraphFile().exportToVizualisation();
             }
         });
         return bVizualiseClass;

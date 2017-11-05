@@ -77,6 +77,8 @@ public interface IGraphFile extends IFile
     public abstract void exportToPrinter();
     
 
+    public abstract void exportToVizualisation();
+
     /**
      * @return current file name (or null if not saved yet)
      */
