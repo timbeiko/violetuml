@@ -21,6 +21,8 @@
 
 package com.horstmann.violet.framework.vizualisation;
 
+import org.knowm.xchart.*;
+
 import java.util.Collection;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.node.*;
@@ -38,7 +40,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 
-import java.util.HashMap;
+import java.util.*;
 
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
@@ -75,7 +77,6 @@ public class VizualisationPanel extends JPanel
         HashMap<Integer, Integer> attrMap = new HashMap<Integer,Integer>();
         HashMap<Integer, Integer> methMap = new HashMap<Integer,Integer>();
 
-
         for (Object node : c) {
             if (node instanceof ClassNode) {
                 ClassNode cNode = (ClassNode) node;
@@ -96,20 +97,20 @@ public class VizualisationPanel extends JPanel
             }
         }
 
-        JPanel attrPanel = new JPanel();
+        PieChart attrChart = new PieChartBuilder().width(300).height(300).title("Attributes").build();
+        for (Map.Entry<Integer, Integer> entry : attrMap.entrySet()) {
+            attrChart.addSeries(entry.getKey().toString(), entry.getValue());
+        }
+        JPanel attrPanel = new XChartPanel<PieChart>(attrChart);
         attrPanel.setLayout(new BorderLayout());
-        JLabel attrTitle = new JLabel("Attributes");
-        JLabel attrLabel = new JLabel(attrMap.toString());
-        attrPanel.add(attrTitle, BorderLayout.NORTH);
-        attrPanel.add(attrLabel, BorderLayout.SOUTH);
         add(attrPanel, BorderLayout.WEST);
 
-        JPanel methPanel = new JPanel();
+        PieChart methChart = new PieChartBuilder().width(300).height(300).title("Methods").build();
+        for (Map.Entry<Integer, Integer> entry : methMap.entrySet()) {
+            methChart.addSeries(entry.getKey().toString(), entry.getValue());
+        }
+        JPanel methPanel = new XChartPanel<PieChart>(methChart);
         methPanel.setLayout(new BorderLayout());
-        JLabel methTitle = new JLabel("Methods");
-        JLabel methLabel = new JLabel(methMap.toString());
-        methPanel.add(methTitle, BorderLayout.NORTH);
-        methPanel.add(methLabel, BorderLayout.SOUTH);
         add(methPanel, BorderLayout.EAST);
 
     }

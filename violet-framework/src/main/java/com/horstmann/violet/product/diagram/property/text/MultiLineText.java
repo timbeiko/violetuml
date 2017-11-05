@@ -33,7 +33,7 @@ public class MultiLineText extends LineText
 
     public int getNumRows() 
     {
-        if (rows.get(0).toEdit().length() == 0)
+        if (rows.get(0).toEdit().length() == 0 || rows.get(0).toEdit().trim().isEmpty())
             return 0;
         else
             return rows.size();
