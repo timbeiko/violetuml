@@ -21,23 +21,21 @@
 
 package com.horstmann.violet.framework.vizualisation;
 
+import java.util.Collection;
+import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.classes.node.*;
+import com.horstmann.violet.product.diagram.classes.*;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent;  
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.print.Book;
-import java.awt.print.PageFormat;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.*;
 
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
@@ -60,235 +58,38 @@ public class VizualisationPanel extends JPanel
     {
         ResourceBundleInjector.getInjector().inject(this);
         this.graph = gr;
-        // VizualisationJob job = VizualisationJob.getVizualisationerJob();
-        // pageFormat = job.defaultPage();
-        // attributes = new HashVizualisationRequestAttributeSet();
-        layoutUI();
+        layoutUI(gr);
     }
 
     /**
      * Lays out the UI of the dialog.
      */
-    public void layoutUI()
+    public void layoutUI(IGraph gr)
     {
         setLayout(new BorderLayout());
+        Collection<INode> c = gr.getAllNodes();
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-        buttonPanel.setBorder(new EmptyBorder(1, 1, 1, 1));
-        ITheme cLAF = ThemeManager.getInstance().getTheme();
-        buttonPanel.setBackground(cLAF.getRolloverButtonDefaultColor());
-
-        RolloverButtonUI buttonUI = new RolloverButtonUI(cLAF.getRolloverButtonRolloverColor(), cLAF
-                .getRolloverButtonRolloverBorderColor(), cLAF.getRolloverButtonDefaultColor());
-
-        this.moreButton.setUI(buttonUI);
-        buttonPanel.add(this.moreButton);
-        this.moreButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                scaleGraph *= Math.sqrt(2);
-                canvas.repaint();
+        for (Object node : c) {
+            System.out.println(node.getClass());
+            if (node instanceof ClassNode) {
+                ClassNode c_node = (ClassNode) node;
+                System.out.println(c_node.getAttributes());
+                System.out.println(c_node.getMethods());
             }
-        });
-
-        this.fewerButton.setUI(buttonUI);
-        buttonPanel.add(this.fewerButton);
-        this.fewerButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                scaleGraph /= Math.sqrt(2);
-                canvas.repaint();
-            }
-        });
-
-        this.onePageButton.setUI(buttonUI);
-        buttonPanel.add(this.onePageButton);
-        this.onePageButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                while (getRows() * getCols() > 1)
-                    scaleGraph /= Math.sqrt(2);
-                canvas.repaint();
-            }
-        });
-
-        this.pageSetupButton.setUI(buttonUI);
-        buttonPanel.add(this.pageSetupButton);
-        this.pageSetupButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                // VizualisationerJob job = VizualisationerJob.getVizualisationerJob();
-                // PageFormat newPageFormat = job.pageDialog(attributes);
-                // if (newPageFormat != null) pageFormat = newPageFormat;
-                // canvas.repaint();
-            }
-        });
-
-        this.printButton.setUI(buttonUI);
-        this.printButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
-                    // VizualisationerJob job = VizualisationerJob.getVizualisationerJob();
-                    // job.setPageable(makeBook());
-                    // if (job.printDialog(attributes))
-                    // {
-                    //     pageFormat = job.validatePage(pageFormat);
-                    //     job.print(attributes);
-                    // }
-                }
-                catch (Error e2)
-                {
-                    // TODO = display error
-                }
-            }
-        });
-        buttonPanel.add(this.printButton);
-
-        add(buttonPanel, BorderLayout.NORTH);
-
-        canvas = new VizualisationPreviewCanvas();
-        JPanel canvasPanel = new JPanel();
-        canvasPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
-        canvasPanel.setOpaque(false);
-        canvasPanel.setLayout(new BorderLayout());
-        canvasPanel.add(canvas, BorderLayout.CENTER);
-
-        add(canvasPanel, BorderLayout.CENTER);
-
-    }
-
-    /**
-     * Makes a book consisting of the pages to be printed.
-     * 
-     * @return the book to be printed
-     */
-    private Book makeBook()
-    {
-        Book book = new Book();
-
-        return book;
-    }
-
-    /**
-     * Gets the number of columns currently required for the printout
-     * 
-     * @return the number of columns (>= 1)
-     */
-    private int getCols()
-    {
-        return (int) Math.max(1, Math.ceil(bounds.getWidth() * scaleGraph / pageFormat.getImageableWidth()));
-    }
-
-    /**
-     * Gets the number of rows currently required for the printout
-     * 
-     * @return the number of rows (>= 1)
-     */
-    private int getRows()
-    {
-        return (int) Math.max(1, Math.ceil(bounds.getHeight() * scaleGraph / pageFormat.getImageableHeight()));
-    }
-
-    /**
-     * The component for displaying the print preview.
-     */
-    class VizualisationPreviewCanvas extends JComponent
-    {
-        public Dimension getPreferredSize()
-        {
-            return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         }
 
-        public void paintComponent(Graphics g)
-        {
-            Graphics2D g2 = (Graphics2D) g;
-            bounds = graph.getClipBounds();
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel(c.toString());
+        panel.add(label);
 
-            double xoff; // x offset of page start in window
-            double yoff; // y offset of page start in window
-            double scalePagesToCanvas; // scale factor to fit pages in canvas
+        add(panel, BorderLayout.CENTER);
 
-            double px = pageFormat.getImageableWidth();
-            double py = pageFormat.getImageableHeight();
-
-            int cols = getCols();
-            int rows = getRows();
-
-            double dx = px * getCols();
-            double dy = py * getRows();
-
-            double sx = getWidth() - 1;
-            double sy = getHeight() - 1;
-            if (dx / dy < sx / sy) // center horizontally
-            {
-                scalePagesToCanvas = sy / dy;
-                xoff = 0.5 * (sx - scalePagesToCanvas * dx);
-                yoff = 0;
-            }
-            else
-            // center vertically
-            {
-                scalePagesToCanvas = sx / dx;
-                xoff = 0;
-                yoff = 0.5 * (sy - scalePagesToCanvas * dy);
-            }
-            g2.translate((float) xoff, (float) yoff);
-            g2.scale((float) scalePagesToCanvas, (float) scalePagesToCanvas);
-            // draw page backgrounds
-            Rectangle2D pages = new Rectangle2D.Double(0, 0, px * cols, py * rows);
-            g2.setPaint(Color.WHITE);
-            g2.fill(pages);
-            g2.setPaint(Color.BLACK);
-
-            AffineTransform oldTransform = g2.getTransform();
-
-            g2.scale((float) scaleGraph, (float) scaleGraph);
-            g2.translate((float) -bounds.getX(), (float) -bounds.getY());
-            graph.draw(g2);
-
-            g2.setTransform(oldTransform);
-            // draw page outlines (ignoring margins)
-            g2.setPaint(Color.LIGHT_GRAY);
-            for (int i = 0; i < cols; i++)
-                for (int j = 0; j < rows; j++)
-                {
-                    Rectangle2D page = new Rectangle2D.Double(i * px, j * py, px, py);
-                    g2.draw(page);
-                }
-        }
-
-        private static final int DEFAULT_WIDTH = 450;
-        private static final int DEFAULT_HEIGHT = 300;
     }
 
-    private VizualisationPreviewCanvas canvas;
-    private PageFormat pageFormat;
-    // private VizualisationRequestAttributeSet attributes;
+
     private IGraph graph;
     private Rectangle2D bounds;
     private double scaleGraph = 1;
 
-    @ResourceBundleBean(key = "dialog.print.more")
-    private JButton moreButton;
-
-    @ResourceBundleBean(key = "dialog.print.fewer")
-    private JButton fewerButton;
-
-    @ResourceBundleBean(key = "dialog.print.one")
-    private JButton onePageButton;
-
-    @ResourceBundleBean(key = "dialog.print.page")
-    private JButton pageSetupButton;
-
-    @ResourceBundleBean(key = "dialog.print.print")
-    private JButton printButton;
 
 }

@@ -23,22 +23,22 @@ public class VizualisationEngine
 
     public void start()
     {
-        VizualisationPanel printPanel = new VizualisationPanel(this.graph);
+        VizualisationPanel vizPanel = new VizualisationPanel(this.graph);
         JOptionPane optionPane = new JOptionPane();
         optionPane.setOptions(new String[]
         {
-            this.printCloseText
+            this.vizCloseText
         });
-        optionPane.setMessage(printPanel);
+        optionPane.setMessage(vizPanel);
         optionPane.setBorder(new EmptyBorder(0, 0, 10, 0));
-        this.dialogFactory.showDialog(optionPane, this.printTitle, true);
+        this.dialogFactory.showDialog(optionPane, this.vizTitle, true);
     }
 
-    @ResourceBundleBean(key = "dialog.print.close.text", resourceReference = VizualisationPanel.class)
-    private String printCloseText;
+    @ResourceBundleBean(key = "dialog.vizualisation.title.text", resourceReference = VizualisationPanel.class)
+    private String vizTitle;
     
-    @ResourceBundleBean(key = "dialog.print.print.text", resourceReference = VizualisationPanel.class)
-    private String printTitle;
+    @ResourceBundleBean(key = "dialog.vizualisation.close.text", resourceReference = VizualisationPanel.class)
+    private String vizCloseText;
     
     private IGraph graph;
     
