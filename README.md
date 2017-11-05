@@ -1,3 +1,12 @@
+# Updates
+
+- The `.exe` package was removed because it would not compile on mac
+- To compile, run `mvn clean package`
+- To launch the `.jar` editor, run `java -jar violetproduct-swing/target/violetumleditor-2.5.3.jar`
+
+
+# Original Readme
+
 How to get the software
 =======================
 
