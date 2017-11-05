@@ -38,6 +38,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 
+import java.util.HashMap;
+
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
 import com.horstmann.violet.framework.swingextension.RolloverButtonUI;
@@ -70,22 +72,45 @@ public class VizualisationPanel extends JPanel
         setLayout(new BorderLayout());
         Collection<INode> c = gr.getAllNodes();
 
+        HashMap<Integer, Integer> attrMap = new HashMap<Integer,Integer>();
+        HashMap<Integer, Integer> methMap = new HashMap<Integer,Integer>();
+
 
         for (Object node : c) {
-            System.out.println(node.getClass());
             if (node instanceof ClassNode) {
-                ClassNode c_node = (ClassNode) node;
-                MultiLineText c_nodeAttr = (MultiLineText) c_node.getAttributes();
-                MultiLineText c_nodeMeth = (MultiLineText) c_node.getMethods();
-                System.out.println(c_nodeAttr.getNumRows());
-                System.out.println(c_nodeMeth.getNumRows());
+                ClassNode cNode = (ClassNode) node;
+                MultiLineText cNodeAttr = (MultiLineText) cNode.getAttributes();
+                MultiLineText cNodeMeth = (MultiLineText) cNode.getMethods();
+                int attrCount = cNodeAttr.getNumRows();
+                int methCount = cNodeMeth.getNumRows();
+
+                if (attrMap.containsKey(attrCount))
+                    attrMap.put(attrCount, (attrMap.get(attrCount) + 1));
+                else 
+                    attrMap.put(attrCount, 1);
+
+                if (methMap.containsKey(methCount))
+                    methMap.put(methCount, (attrMap.get(methCount) + 1));
+                else 
+                    methMap.put(methCount, 1);
             }
         }
 
         JPanel attrPanel = new JPanel();
-        JLabel attrLabel = new JLabel(c.toString());
-        attrPanel.add(attrLabel);
+        attrPanel.setLayout(new BorderLayout());
+        JLabel attrTitle = new JLabel("Attributes");
+        JLabel attrLabel = new JLabel(attrMap.toString());
+        attrPanel.add(attrTitle, BorderLayout.NORTH);
+        attrPanel.add(attrLabel, BorderLayout.SOUTH);
         add(attrPanel, BorderLayout.WEST);
+
+        JPanel methPanel = new JPanel();
+        methPanel.setLayout(new BorderLayout());
+        JLabel methTitle = new JLabel("Methods");
+        JLabel methLabel = new JLabel(methMap.toString());
+        methPanel.add(methTitle, BorderLayout.NORTH);
+        methPanel.add(methLabel, BorderLayout.SOUTH);
+        add(methPanel, BorderLayout.EAST);
 
     }
 

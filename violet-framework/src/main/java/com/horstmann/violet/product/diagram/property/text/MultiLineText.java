@@ -33,7 +33,10 @@ public class MultiLineText extends LineText
 
     public int getNumRows() 
     {
-        return rows.size();
+        if (rows.get(0).toEdit().length() == 0)
+            return 0;
+        else
+            return rows.size();
     }
     protected MultiLineText(MultiLineText lineText) throws CloneNotSupportedException
     {
