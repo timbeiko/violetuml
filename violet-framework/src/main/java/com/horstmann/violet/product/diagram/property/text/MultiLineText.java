@@ -30,6 +30,11 @@ public class MultiLineText extends LineText
         super(converter);
         setPadding(6,8);
     }
+
+    public int getNumRows() 
+    {
+        return rows.size();
+    }
     protected MultiLineText(MultiLineText lineText) throws CloneNotSupportedException
     {
         super(lineText);

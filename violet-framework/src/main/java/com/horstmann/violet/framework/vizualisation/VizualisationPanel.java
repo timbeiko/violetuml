@@ -25,6 +25,7 @@ import java.util.Collection;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.node.*;
 import com.horstmann.violet.product.diagram.classes.*;
+import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -69,20 +70,22 @@ public class VizualisationPanel extends JPanel
         setLayout(new BorderLayout());
         Collection<INode> c = gr.getAllNodes();
 
+
         for (Object node : c) {
             System.out.println(node.getClass());
             if (node instanceof ClassNode) {
                 ClassNode c_node = (ClassNode) node;
-                System.out.println(c_node.getAttributes());
-                System.out.println(c_node.getMethods());
+                MultiLineText c_nodeAttr = (MultiLineText) c_node.getAttributes();
+                MultiLineText c_nodeMeth = (MultiLineText) c_node.getMethods();
+                System.out.println(c_nodeAttr.getNumRows());
+                System.out.println(c_nodeMeth.getNumRows());
             }
         }
 
-        JPanel panel = new JPanel();
-        JLabel label = new JLabel(c.toString());
-        panel.add(label);
-
-        add(panel, BorderLayout.CENTER);
+        JPanel attrPanel = new JPanel();
+        JLabel attrLabel = new JLabel(c.toString());
+        attrPanel.add(attrLabel);
+        add(attrPanel, BorderLayout.WEST);
 
     }
 
