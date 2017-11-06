@@ -25,9 +25,18 @@ import org.knowm.xchart.*;
 
 import java.util.Collection;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
-import com.horstmann.violet.product.diagram.classes.node.*;
+import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
+
 import com.horstmann.violet.product.diagram.classes.*;
-import com.horstmann.violet.product.diagram.property.text.MultiLineText;
+import com.horstmann.violet.product.diagram.classes.node.*;
+import com.horstmann.violet.product.diagram.classes.edge.*;
+
+import com.horstmann.violet.product.diagram.sequence.*;
+import com.horstmann.violet.product.diagram.sequence.node.*;
+import com.horstmann.violet.product.diagram.sequence.edge.*;
+
+
+import com.horstmann.violet.product.diagram.property.text.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -74,51 +83,89 @@ public class VizualisationPanel extends JPanel
         setLayout(new BorderLayout());
         Collection<INode> c = gr.getAllNodes();
 
-        HashMap<Integer, Integer> attrMap = new HashMap<Integer,Integer>();
-        HashMap<Integer, Integer> methMap = new HashMap<Integer,Integer>();
+        // Class Diagram 
+        if (gr instanceof ClassDiagramGraph) {
+            HashMap<Integer, Integer> attrMap = new HashMap<Integer,Integer>();
+            HashMap<Integer, Integer> methMap = new HashMap<Integer,Integer>();
 
-        for (Object node : c) {
-            if (node instanceof ClassNode) {
-                ClassNode cNode = (ClassNode) node;
-                MultiLineText cNodeAttr = (MultiLineText) cNode.getAttributes();
-                MultiLineText cNodeMeth = (MultiLineText) cNode.getMethods();
-                int attrCount = cNodeAttr.getNumRows();
-                int methCount = cNodeMeth.getNumRows();
+            for (Object node : c) {
+                if (node instanceof ClassNode) {
+                    ClassNode cNode = (ClassNode) node;
+                    MultiLineText cNodeAttr = (MultiLineText) cNode.getAttributes();
+                    MultiLineText cNodeMeth = (MultiLineText) cNode.getMethods();
+                    int attrCount = cNodeAttr.getNumRows();
+                    int methCount = cNodeMeth.getNumRows();
 
-                if (attrMap.containsKey(attrCount))
-                    attrMap.put(attrCount, (attrMap.get(attrCount) + 1));
-                else 
-                    attrMap.put(attrCount, 1);
+                    if (attrMap.containsKey(attrCount))
+                        attrMap.put(attrCount, (attrMap.get(attrCount) + 1));
+                    else 
+                        attrMap.put(attrCount, 1);
 
-                if (methMap.containsKey(methCount))
-                    methMap.put(methCount, (attrMap.get(methCount) + 1));
-                else 
-                    methMap.put(methCount, 1);
+                    if (methMap.containsKey(methCount))
+                        methMap.put(methCount, (attrMap.get(methCount) + 1));
+                    else 
+                        methMap.put(methCount, 1);
+                } 
             }
+
+            PieChart attrChart = new PieChartBuilder().width(300).height(300).title("Attributes").build();
+            for (Map.Entry<Integer, Integer> entry : attrMap.entrySet()) {
+                attrChart.addSeries(entry.getKey().toString(), entry.getValue());
+            }
+            JPanel attrPanel = new XChartPanel<PieChart>(attrChart);
+            attrPanel.setLayout(new BorderLayout());
+            add(attrPanel, BorderLayout.WEST);
+
+            PieChart methChart = new PieChartBuilder().width(300).height(300).title("Methods").build();
+            for (Map.Entry<Integer, Integer> entry : methMap.entrySet()) {
+                methChart.addSeries(entry.getKey().toString(), entry.getValue());
+            }
+            JPanel methPanel = new XChartPanel<PieChart>(methChart);
+            methPanel.setLayout(new BorderLayout());
+            add(methPanel, BorderLayout.EAST);
         }
 
-        PieChart attrChart = new PieChartBuilder().width(300).height(300).title("Attributes").build();
-        for (Map.Entry<Integer, Integer> entry : attrMap.entrySet()) {
-            attrChart.addSeries(entry.getKey().toString(), entry.getValue());
-        }
-        JPanel attrPanel = new XChartPanel<PieChart>(attrChart);
-        attrPanel.setLayout(new BorderLayout());
-        add(attrPanel, BorderLayout.WEST);
+        // Sequence Diagram
+        if (gr instanceof SequenceDiagramGraph) {
+            // messMaps holds the number of messages per Object
+            HashMap<INode, Integer> messMap = new HashMap<INode,Integer>();
+            Collection<IEdge> e = gr.getAllEdges();
+            Iterator it = e.iterator();
+            while (it.hasNext()) {
+                IEdge ie = (IEdge) it.next();
+                INode parent = ie.getStartNode().getParent();
+                if (messMap.containsKey(parent))
+                        messMap.put(parent, (messMap.get(parent) + 1));
+                else 
+                    messMap.put(parent, 1);
+            }
 
-        PieChart methChart = new PieChartBuilder().width(300).height(300).title("Methods").build();
-        for (Map.Entry<Integer, Integer> entry : methMap.entrySet()) {
-            methChart.addSeries(entry.getKey().toString(), entry.getValue());
-        }
-        JPanel methPanel = new XChartPanel<PieChart>(methChart);
-        methPanel.setLayout(new BorderLayout());
-        add(methPanel, BorderLayout.EAST);
+            for (INode node : c) {
+                if (!messMap.containsKey(node) && node instanceof LifelineNode)
+                        messMap.put(node, 0);
+            }
 
+            HashMap<Integer, Integer> countMap = new HashMap<Integer,Integer>();
+            for (Map.Entry<INode, Integer> entry : messMap.entrySet()) {
+                int count = entry.getValue();
+                if (countMap.containsKey(count))
+                        countMap.put(count, (countMap.get(count) + 1));
+                else 
+                    countMap.put(count, 1);
+            }
+
+            PieChart messChart = new PieChartBuilder().width(300).height(300).title("Outgoing Messages").build();
+            for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+                messChart.addSeries(entry.getKey().toString(), entry.getValue());
+            }
+            JPanel messPanel = new XChartPanel<PieChart>(messChart);
+            messPanel.setLayout(new BorderLayout());
+            add(messPanel, BorderLayout.CENTER);
+        }
     }
-
 
     private IGraph graph;
     private Rectangle2D bounds;
     private double scaleGraph = 1;
-
 
 }
