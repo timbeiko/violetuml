@@ -1,0 +1,22 @@
+{
+  "diagramName": "myclass.class.violet.html",
+  "numOfClasses": 3,
+  "numOfRelationships": 2,
+  "classes": {
+    "Class_1": {
+      "attributes": 1,
+      "methods": 1,
+      "CBO": 0
+    },
+    "Class_2": {
+      "attributes": 2,
+      "methods": 1,
+      "CBO": 2
+    },
+    "Class_3": {
+      "attributes": 1,
+      "methods": 2,
+      "CBO": 0
+    }
+  }
+}

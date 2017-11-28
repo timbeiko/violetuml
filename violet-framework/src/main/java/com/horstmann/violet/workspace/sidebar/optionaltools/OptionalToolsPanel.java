@@ -104,6 +104,18 @@ public class OptionalToolsPanel extends JPanel implements ISideBarElement
         return bVizualiseClass;
     }
 
+    protected JButton getStatisticsButton()
+    {
+        bStatistics.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("Statistics button");
+            }
+        });
+        return bStatistics;
+    }
+
     protected JButton getHelpButton()
     {
         bHelp.addActionListener(new ActionListener()
@@ -129,13 +141,14 @@ public class OptionalToolsPanel extends JPanel implements ISideBarElement
 
     @ResourceBundleBean(key="vizualise_classes")
     private JButton bVizualiseClass;
+
+    @ResourceBundleBean(key="statistics")
+    private JButton bStatistics;
     
     @ResourceBundleBean(key="print")
     private JButton bPrint;
 
     @ResourceBundleBean(key="help")
     private JButton bHelp;
-
-
 
 }
