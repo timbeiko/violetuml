@@ -24,7 +24,12 @@ package com.horstmann.violet.framework.statistics;
 import org.knowm.xchart.*;
 import java.io.File;
 import java.nio.file.Paths;
+import com.google.gson.*;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.*;
+import java.io.*;
 
 import java.util.Collection;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
@@ -87,11 +92,21 @@ public class StatisticsPanel extends JPanel
      */
     public void classPanelUI(File[] statsFiles)
     {
+        Gson classFiles = new Gson();
         setLayout(new BorderLayout());
         if (statsFiles != null) {
             for (File cf : statsFiles) {
-                System.out.println("Change code here");
-                System.out.println(cf); // Need to do things instead of printing
+                try {
+                    JsonReader reader = new JsonReader(new FileReader(cf));
+                    Gson gson = new Gson();
+                    java.lang.reflect.Type mapType = 
+                        new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType(); 
+                    Map<String,Object> statistics = gson.fromJson(reader, mapType);
+                    System.out.println(statistics);
+                } catch (Exception e) {
+                    System.out.println(e);
+                    throw new java.lang.Error("Can't read input file");
+                }
             }   
         }
     }
