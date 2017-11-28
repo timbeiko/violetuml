@@ -22,6 +22,9 @@
 package com.horstmann.violet.framework.statistics;
 
 import org.knowm.xchart.*;
+import java.io.File;
+import java.nio.file.Paths;
+
 
 import java.util.Collection;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
@@ -84,12 +87,28 @@ public class StatisticsPanel extends JPanel
 
         // Class Diagram 
         if (gr instanceof ClassDiagramGraph) {
-            System.out.println("Class diagram!");
+            String classStatsPath = Paths.get("./class-statistics").toAbsolutePath().normalize().toString();
+            File classStatsDir = new File(classStatsPath);
+            File[] classFiles = classStatsDir.listFiles();
+            if (classFiles != null) {
+                for (File cf : classFiles) {
+                    System.out.println("Change code here");
+                    System.out.println(cf); // Need to do things instead of printing
+                }   
+            }
         }
 
         // Sequence Diagram
         if (gr instanceof SequenceDiagramGraph) {
-            System.out.println("Sequence diagram!");
+            String seqStatsPath = Paths.get("./sequencediagram-statistics").toAbsolutePath().normalize().toString();
+            File seqStatsDir = new File(seqStatsPath);
+            File[] seqFiles = seqStatsDir.listFiles();
+            if (seqFiles != null) {
+                for (File sf : seqFiles) {
+                    System.out.println("Change code here");
+                    System.out.println(sf); // Need to do things instead of printing
+                }   
+            }
         }
     }
     private IGraph graph;
