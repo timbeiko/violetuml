@@ -27,6 +27,7 @@ import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
 import com.horstmann.violet.framework.printer.PrintEngine;
 import com.horstmann.violet.framework.vizualisation.VizualisationEngine;
+import com.horstmann.violet.framework.statistics.StatisticsEngine;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 
 public class GraphFile implements IGraphFile
@@ -313,6 +314,13 @@ public class GraphFile implements IGraphFile
     public void exportToVizualisation()
     {
         VizualisationEngine engine = new VizualisationEngine(this.graph);
+        engine.start();
+    }
+
+    @Override
+    public void exportToStatistics()
+    {
+        StatisticsEngine engine = new StatisticsEngine(this.graph);
         engine.start();
     }
 

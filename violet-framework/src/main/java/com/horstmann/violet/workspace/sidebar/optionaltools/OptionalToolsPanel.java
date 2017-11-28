@@ -34,6 +34,7 @@ import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.sidebar.ISideBarElement;
 import com.horstmann.violet.workspace.sidebar.SideBar;
 
+
 @ResourceBundleBean(resourceReference=SideBar.class)
 public class OptionalToolsPanel extends JPanel implements ISideBarElement
 {
@@ -110,7 +111,7 @@ public class OptionalToolsPanel extends JPanel implements ISideBarElement
         {
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Statistics button");
+                diagramPanel.getGraphFile().exportToStatistics();
             }
         });
         return bStatistics;
