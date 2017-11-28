@@ -59,7 +59,7 @@ import com.horstmann.violet.framework.injection.resources.annotation.ResourceBun
 import com.horstmann.violet.framework.swingextension.RolloverButtonUI;
 import com.horstmann.violet.framework.theme.ITheme;
 import com.horstmann.violet.framework.theme.ThemeManager;
-import com.horstmann.violet.product.diagram.abstracts.IGraph;
+
 
 /**
  * This class implements a dialog for previewing and printing a graph.
@@ -71,47 +71,42 @@ public class StatisticsPanel extends JPanel
      * 
      * @param gr the graph to be printed
      */
-    public StatisticsPanel(IGraph gr)
+    public StatisticsPanel(String panelType, File[] statsFiles)
     {
         ResourceBundleInjector.getInjector().inject(this);
-        this.graph = gr;
-        layoutUI(gr);
+        if (panelType.equals("class")) 
+            classPanelUI(statsFiles);
+        else if (panelType.equals("sequence"))
+            seqPanelUI(statsFiles);
+        else
+            throw new java.lang.Error("Need a Class or Sequence diagram");
     }
 
     /**
      * Lays out the UI of the dialog.
      */
-    public void layoutUI(IGraph gr)
+    public void classPanelUI(File[] statsFiles)
     {
         setLayout(new BorderLayout());
-
-        // Class Diagram 
-        if (gr instanceof ClassDiagramGraph) {
-            String classStatsPath = Paths.get("./class-statistics").toAbsolutePath().normalize().toString();
-            File classStatsDir = new File(classStatsPath);
-            File[] classFiles = classStatsDir.listFiles();
-            if (classFiles != null) {
-                for (File cf : classFiles) {
-                    System.out.println("Change code here");
-                    System.out.println(cf); // Need to do things instead of printing
-                }   
-            }
-        }
-
-        // Sequence Diagram
-        if (gr instanceof SequenceDiagramGraph) {
-            String seqStatsPath = Paths.get("./sequencediagram-statistics").toAbsolutePath().normalize().toString();
-            File seqStatsDir = new File(seqStatsPath);
-            File[] seqFiles = seqStatsDir.listFiles();
-            if (seqFiles != null) {
-                for (File sf : seqFiles) {
-                    System.out.println("Change code here");
-                    System.out.println(sf); // Need to do things instead of printing
-                }   
-            }
+        if (statsFiles != null) {
+            for (File cf : statsFiles) {
+                System.out.println("Change code here");
+                System.out.println(cf); // Need to do things instead of printing
+            }   
         }
     }
-    private IGraph graph;
+
+    public void seqPanelUI(File[] statsFiles)
+    {
+        System.out.println("To be implemented when sequence diagram format is agreed upon");
+        setLayout(new BorderLayout());
+        if (statsFiles != null) {
+            for (File cf : statsFiles) {
+                System.out.println(cf); 
+            }   
+        }
+    }
+
     private Rectangle2D bounds;
     private double scaleGraph = 1;
 

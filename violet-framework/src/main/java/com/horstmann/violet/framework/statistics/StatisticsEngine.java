@@ -1,7 +1,10 @@
 package com.horstmann.violet.framework.statistics;
-
+import java.io.File;
+import java.nio.file.Paths;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import com.horstmann.violet.product.diagram.classes.*;
+import com.horstmann.violet.product.diagram.sequence.*;
 
 import com.horstmann.violet.framework.dialog.DialogFactory;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.BeanInjector;
@@ -23,7 +26,21 @@ public class StatisticsEngine
 
     public void start()
     {
-        StatisticsPanel statsPanel = new StatisticsPanel(this.graph);
+        StatisticsPanel statsPanel;
+        if (this.graph instanceof ClassDiagramGraph) {
+            String classStatsPath = Paths.get("./class-statistics").toAbsolutePath().normalize().toString();
+            File classStatsDir = new File(classStatsPath);
+            File[] classFiles = classStatsDir.listFiles();
+            statsPanel = new StatisticsPanel("class", classFiles);
+        } else if (this.graph instanceof SequenceDiagramGraph) {
+            String seqStatsPath = Paths.get("./sequencediagram-statistics").toAbsolutePath().normalize().toString();
+            File seqStatsDir = new File(seqStatsPath);
+            File[] seqFiles = seqStatsDir.listFiles();
+            statsPanel = new StatisticsPanel("sequence", seqFiles);
+        } else {
+            throw new java.lang.Error("Need a Class or Sequence diagram");
+        }
+
         JOptionPane optionPane = new JOptionPane();
         optionPane.setOptions(new String[]
         {
