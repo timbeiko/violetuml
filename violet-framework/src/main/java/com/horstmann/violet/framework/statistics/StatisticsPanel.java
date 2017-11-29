@@ -92,7 +92,7 @@ public class StatisticsPanel extends JPanel
     public void classPanelUI(File[] statsFiles)
     {
         Gson classFiles = new Gson();
-        setLayout(new GridBagLayout());
+
         ArrayList<Map<String,Object>> jsonFiles = new ArrayList<Map<String,Object>>();
         if (statsFiles != null) {
             for (File cf : statsFiles) {
@@ -173,14 +173,9 @@ public class StatisticsPanel extends JPanel
             }
         }
 
-        // Title for first section
+        setLayout(new GridBagLayout());
+        setPreferredSize(new Dimension(800, 600));
         GridBagConstraints c = new GridBagConstraints();
-        JLabel diagramStats = new JLabel("Diagram-level Statistics");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridwidth = 1;
-        c.gridy = 0;
-        add(diagramStats, c);
 
         // Classes per diagram 
         PieChart classChart = new PieChartBuilder().width(300).height(300).title("Classes per Diagram").build();
@@ -188,11 +183,10 @@ public class StatisticsPanel extends JPanel
                 classChart.addSeries(entry.getKey().toString(), entry.getValue());
         }
         JPanel classPanel = new XChartPanel<PieChart>(classChart);
-        classPanel.setLayout(new BorderLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridwidth = 2;
         c.gridy = 1;
+        c.weightx = 0;
         add(classPanel, c);
 
         // Relationships per diagram 
@@ -201,59 +195,46 @@ public class StatisticsPanel extends JPanel
                 relationChart.addSeries(entry.getKey().toString(), entry.getValue());
         }
         JPanel relationPanel = new XChartPanel<PieChart>(relationChart);
-        relationPanel.setLayout(new BorderLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridwidth = 2;
+        c.gridx = GridBagConstraints.RELATIVE;
         c.gridy = 1;
+        c.weightx = 0.5;
         add(relationPanel, c);
 
-        // Title for second section 
-        JLabel classStats = new JLabel("Class-level Statistics");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridwidth = 1;
-        c.gridy = 2;
-        add(classStats, c);
-
         // Attributes per class 
-        PieChart attrChart = new PieChartBuilder().width(200).height(200).title("Attributes per class").build();
+        PieChart attrChart = new PieChartBuilder().width(200).height(200).title("Attributes per Class").build();
             for (Map.Entry<Double, Integer> entry : attrPerClass.entrySet()) {
                 attrChart.addSeries(entry.getKey().toString(), entry.getValue());
         }
         JPanel attrPanel = new XChartPanel<PieChart>(attrChart);
-        attrPanel.setLayout(new BorderLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridwidth = 3;
         c.gridy = 3;
+        c.weightx = 0;
         add(attrPanel, c);
 
         // Methods per class 
-        PieChart methChart = new PieChartBuilder().width(200).height(200).title("Methods per class").build();
+        PieChart methChart = new PieChartBuilder().width(200).height(200).title("Methods per Class").build();
             for (Map.Entry<Double, Integer> entry : methPerClass.entrySet()) {
                 methChart.addSeries(entry.getKey().toString(), entry.getValue());
         }
         JPanel methPanel = new XChartPanel<PieChart>(methChart);
-        methPanel.setLayout(new BorderLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridwidth = 3;
+        c.gridx = GridBagConstraints.RELATIVE;
         c.gridy = 3;
+        c.weightx = 0.5;
         add(methPanel, c);
 
-
         // CBO per class 
-        PieChart cboChart = new PieChartBuilder().width(200).height(200).title("CBO per class").build();
+        PieChart cboChart = new PieChartBuilder().width(200).height(200).title("CBO per Class").build();
             for (Map.Entry<Double, Integer> entry : cboPerClass.entrySet()) {
                 cboChart.addSeries(entry.getKey().toString(), entry.getValue());
         }
         JPanel cboPanel = new XChartPanel<PieChart>(cboChart);
-        cboPanel.setLayout(new BorderLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 2;
-        c.gridwidth = 3;
+        c.gridx = GridBagConstraints.RELATIVE;
         c.gridy = 3;
+        c.weightx = 0.5;
         add(cboPanel, c);
     }
 
