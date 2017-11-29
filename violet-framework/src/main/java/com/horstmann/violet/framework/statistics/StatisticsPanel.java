@@ -43,7 +43,6 @@ import com.horstmann.violet.product.diagram.sequence.*;
 import com.horstmann.violet.product.diagram.sequence.node.*;
 import com.horstmann.violet.product.diagram.sequence.edge.*;
 
-
 import com.horstmann.violet.product.diagram.property.text.*;
 
 import java.awt.BorderLayout;
@@ -64,7 +63,6 @@ import com.horstmann.violet.framework.injection.resources.annotation.ResourceBun
 import com.horstmann.violet.framework.swingextension.RolloverButtonUI;
 import com.horstmann.violet.framework.theme.ITheme;
 import com.horstmann.violet.framework.theme.ThemeManager;
-
 
 /**
  * This class implements a dialog for previewing and printing a graph.
@@ -94,6 +92,7 @@ public class StatisticsPanel extends JPanel
     {
         Gson classFiles = new Gson();
         setLayout(new BorderLayout());
+        ArrayList<Map<String,Object>> jsonFiles = new ArrayList<Map<String,Object>>();
         if (statsFiles != null) {
             for (File cf : statsFiles) {
                 try {
@@ -102,13 +101,82 @@ public class StatisticsPanel extends JPanel
                     java.lang.reflect.Type mapType = 
                         new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType(); 
                     Map<String,Object> statistics = gson.fromJson(reader, mapType);
-                    System.out.println(statistics);
+                    jsonFiles.add(statistics);
                 } catch (Exception e) {
                     System.out.println(e);
                     throw new java.lang.Error("Can't read input file");
                 }
             }   
         }
+
+        // Statistics we will want to display 
+        Map<Double, Integer> classesPerProject = new HashMap<Double,Integer>();
+        Map<Double, Integer> relationshipsPerProject = new HashMap<Double,Integer>();
+        Map<Double, Integer> attrPerClass = new HashMap<Double,Integer>();
+        Map<Double, Integer> methPerClass = new HashMap<Double,Integer>();
+        Map<Double, Integer> cboPerClass = new HashMap<Double,Integer>();
+
+        for (Map<String,Object> jf: jsonFiles) {
+            Iterator it = jf.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                switch ((String) pair.getKey()) {
+                    case "numOfClasses":
+                        double numClasses = (double) pair.getValue();
+                        if (classesPerProject.containsKey(numClasses))
+                            classesPerProject.put(numClasses, (classesPerProject.get(numClasses) + 1));
+                        else 
+                            classesPerProject.put(numClasses, 1);
+                        break;
+                    case "numOfRelationships":
+                        double numRelationships = (double) pair.getValue();
+                        if (relationshipsPerProject.containsKey(numRelationships))
+                            relationshipsPerProject.put(numRelationships, (relationshipsPerProject.get(numRelationships) + 1));
+                        else 
+                            relationshipsPerProject.put(numRelationships, 1);   
+                        break;
+                    case "classes":
+                        Map<String,Object> classes = (Map<String,Object>) pair.getValue();
+
+                        for (Map.Entry<String, Object> p2 : classes.entrySet()) {
+                            Map<String, Double> classInfo = (Map<String, Double>) p2.getValue();
+                            for (Map.Entry<String, Double> p3 : classInfo.entrySet()) {
+                                switch ((String) p3.getKey()) {
+                                    case "attributes":
+                                        double numAttr = (double) p3.getValue();
+                                        if (attrPerClass.containsKey(numAttr))
+                                            attrPerClass.put(numAttr, (attrPerClass.get(numAttr) + 1));
+                                        else 
+                                            attrPerClass.put(numAttr, 1);
+                                        break;
+                                    case "methods":
+                                        double numMeth = (double) p3.getValue();
+                                        if (methPerClass.containsKey(numMeth))
+                                            methPerClass.put(numMeth, (methPerClass.get(numMeth) + 1));
+                                        else 
+                                            methPerClass.put(numMeth, 1);
+                                        break;
+                                    case "CBO":
+                                        double numCBO = (double) p3.getValue();
+                                        if (cboPerClass.containsKey(numCBO))
+                                            cboPerClass.put(numCBO, (cboPerClass.get(numCBO) + 1));
+                                        else 
+                                            cboPerClass.put(numCBO, 1);
+                                        break;
+                                }
+                            }
+                        }
+                        break;               
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+
+        System.out.println(classesPerProject);
+        System.out.println(relationshipsPerProject);
+        System.out.println(cboPerClass);
+        System.out.println(methPerClass);
+        System.out.println(attrPerClass);
     }
 
     public void seqPanelUI(File[] statsFiles)
