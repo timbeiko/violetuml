@@ -1,0 +1,18 @@
+{
+  "diagramName": "seqdiag.sequencediagram.violet.html",
+  "numOfObjects": 3,
+  "Objects": {
+    "Object1": {
+      "activations": 1,
+      "messages": 1
+    },
+    "Object2": {
+      "activations": 2,
+      "messages": 1
+    },
+    "Object3": {
+      "activations": 0,
+      "messages": 0
+    }
+  }
+}

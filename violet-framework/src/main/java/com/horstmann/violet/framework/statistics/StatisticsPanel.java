@@ -91,8 +91,6 @@ public class StatisticsPanel extends JPanel
      */
     public void classPanelUI(File[] statsFiles)
     {
-        Gson classFiles = new Gson();
-
         ArrayList<Map<String,Object>> jsonFiles = new ArrayList<Map<String,Object>>();
         if (statsFiles != null) {
             for (File cf : statsFiles) {
@@ -240,13 +238,112 @@ public class StatisticsPanel extends JPanel
 
     public void seqPanelUI(File[] statsFiles)
     {
-        System.out.println("To be implemented when sequence diagram format is agreed upon");
-        setLayout(new BorderLayout());
+
+
+        ArrayList<Map<String,Object>> jsonFiles = new ArrayList<Map<String,Object>>();
         if (statsFiles != null) {
             for (File cf : statsFiles) {
-                System.out.println(cf); 
+                try {
+                    JsonReader reader = new JsonReader(new FileReader(cf));
+                    Gson gson = new Gson();
+                    java.lang.reflect.Type mapType = 
+                        new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType(); 
+                    Map<String,Object> statistics = gson.fromJson(reader, mapType);
+                    jsonFiles.add(statistics);
+                } catch (Exception e) {
+                    System.out.println(e);
+                    throw new java.lang.Error("Can't read input file");
+                }
             }   
         }
+
+        // Statistics we will want to display 
+        Map<Double, Integer> objectsPerProject = new HashMap<Double,Integer>();
+        Map<Double, Integer> activationsPerObject = new HashMap<Double,Integer>();
+        Map<Double, Integer> messagesPerObject = new HashMap<Double,Integer>();
+
+        for (Map<String,Object> jf: jsonFiles) {
+            Iterator it = jf.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                switch ((String) pair.getKey()) {
+                    case "numOfObjects":
+                        double numObjects = (double) pair.getValue();
+                        if (objectsPerProject.containsKey(numObjects))
+                            objectsPerProject.put(numObjects, (objectsPerProject.get(numObjects) + 1));
+                        else 
+                            objectsPerProject.put(numObjects, 1);
+                        break;
+                    case "Objects":
+                        Map<String,Object> objects = (Map<String,Object>) pair.getValue();
+
+                        for (Map.Entry<String, Object> p2 : objects.entrySet()) {
+                            Map<String, Double> objInfo = (Map<String, Double>) p2.getValue();
+                            for (Map.Entry<String, Double> p3 : objInfo.entrySet()) {
+                                switch ((String) p3.getKey()) {
+                                    case "activations":
+                                        double numAct = (double) p3.getValue();
+                                        if (activationsPerObject.containsKey(numAct))
+                                            activationsPerObject.put(numAct, (activationsPerObject.get(numAct) + 1));
+                                        else 
+                                            activationsPerObject.put(numAct, 1);
+                                        break;
+                                    case "messages":
+                                        double numMess = (double) p3.getValue();
+                                        if (messagesPerObject.containsKey(numMess))
+                                            messagesPerObject.put(numMess, (messagesPerObject.get(numMess) + 1));
+                                        else 
+                                            messagesPerObject.put(numMess, 1);
+                                        break;
+                                }
+                            }
+                        }
+                        break;               
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+
+        setLayout(new GridBagLayout());
+        setPreferredSize(new Dimension(800, 600));
+        GridBagConstraints c = new GridBagConstraints();
+
+        // Objects per diagram 
+        PieChart objChart = new PieChartBuilder().width(300).height(300).title("Objects per Diagram").build();
+            for (Map.Entry<Double, Integer> entry : objectsPerProject.entrySet()) {
+                objChart.addSeries(entry.getKey().toString(), entry.getValue());
+        }
+        JPanel objPanel = new XChartPanel<PieChart>(objChart);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 0;
+        add(objPanel, c);
+
+
+        // Activations per objects 
+        PieChart activChart = new PieChartBuilder().width(300).height(300).title("Activations per Object").build();
+            for (Map.Entry<Double, Integer> entry : activationsPerObject.entrySet()) {
+                activChart.addSeries(entry.getKey().toString(), entry.getValue());
+        }
+        JPanel activPanel = new XChartPanel<PieChart>(activChart);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = GridBagConstraints.RELATIVE;
+        c.gridy = 2;
+        c.weightx = 0.5;
+        add(activPanel, c);
+
+        // Messages per objects 
+        PieChart messChart = new PieChartBuilder().width(300).height(300).title("Messages per Object").build();
+            for (Map.Entry<Double, Integer> entry : messagesPerObject.entrySet()) {
+                messChart.addSeries(entry.getKey().toString(), entry.getValue());
+        }
+        JPanel messPanel = new XChartPanel<PieChart>(messChart);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = GridBagConstraints.RELATIVE;
+        c.gridy = 2;
+        c.weightx = 0.5;
+        add(messPanel, c);
     }
 
     private Rectangle2D bounds;
