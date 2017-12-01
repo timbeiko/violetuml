@@ -1,13 +1,16 @@
 # Updates to Readme
 
-## Features in Iteration 1.2 
-- Display pie chart showing the size distribution of the classes in the class mode
-- Display pie chart showing the number of outgoing messages per object in the sequence diagram
+## Running the new features 
+- To compile, run `mvn clean package`
+- To launch the `.jar` editor, run `java -jar violetproduct-swing/target/violetumleditor-2.5.3.jar`
+
+- To run class model related features, you must create a new class model, and then click on the pie-chart or statistics button in the "Extended functions" section of the side bar. 
+
+- To run sequence diagram related features, you must create a new sequence diagram, and then click on the pie-chart or statistics button in the "Extended functions" section of the side bar. 
+
 
 ## Changes in code 
 - The `.exe` package was removed because it would not compile on mac
-- To compile, run `mvn clean package`
-- To launch the `.jar` editor, run `java -jar violetproduct-swing/target/violetumleditor-2.5.3.jar`
 
 
 # Original Readme
